@@ -71,13 +71,13 @@ export const LandingPage: React.FC = () => {
         {/* Nav Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-mono tracking-wider font-bold text-slate-600">
           <a href="#features" className="hover:text-purple-600 transition-colors">
-            // WHY TUKI
+            WHY TUKI
           </a>
           <a href="#how-it-works" className="hover:text-purple-600 transition-colors">
-            // HOW IT WORKS
+            HOW IT WORKS
           </a>
           <a href="#explore" className="hover:text-purple-600 transition-colors">
-            // SQUAD MAPS
+            SQUAD MAPS
           </a>
         </nav>
 
@@ -107,7 +107,7 @@ export const LandingPage: React.FC = () => {
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-purple-600 text-xs font-mono font-bold tracking-widest uppercase">
               <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse" />
-              Social Cartography
+              Social Map
             </div>
 
             <h1 className="font-display text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.08]">
@@ -127,16 +127,11 @@ export const LandingPage: React.FC = () => {
                 to="/groups"
                 className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 hover:from-rose-400 hover:to-purple-500 text-white font-extrabold text-xs tracking-wider uppercase shadow-glow-rose transition-all hover:scale-105"
               >
-                <span>Create Squad Map Free</span>
+                <span>START YOUR SQUAD MAP</span>
                 <ArrowRight className="w-4 h-4 text-white" />
               </Link>
 
-              <button
-                onClick={() => navigate('/groups')}
-                className="px-6 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-rose-500/50 font-extrabold text-xs tracking-wider uppercase transition-all"
-              >
-                Explore Demo Groups
-              </button>
+
             </div>
 
             {/* Social Proof Stats Bar */}
@@ -319,58 +314,55 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Feature Section */}
-      <section id="features" className="py-20 px-4 lg:px-12 bg-slate-950/60 border-y border-slate-800/80 backdrop-blur-sm relative">
+      {/* Feature Section: "Because 'someday' deserves a pin." */}
+      <section id="features" className="py-20 px-4 lg:px-12 bg-white border-y border-slate-200/80">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono font-bold tracking-widest uppercase">
-              // SQUAD CARTOGRAPHY
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-display">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-display">
               Because “someday” deserves a pin.
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Discover, save, get inspired, and build a living visual archive of your squad's favorite hangout spots.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-3xl border border-slate-800 bg-[#111827]/80 space-y-3 hover:border-rose-500/60 hover:shadow-glow-rose transition-all duration-300 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500/20 to-purple-500/20 text-rose-400 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
+            <div className="p-6 rounded-3xl border border-slate-200/80 bg-slate-50 space-y-3 hover:border-purple-300 hover:bg-white hover:shadow-md transition-all duration-200 group">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                 <MapPin className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-base text-white font-display">Save Places Instantly</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-extrabold text-base text-slate-900 font-display">Save Places Instantly</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Search any spot, coffee shop, or surf beach and pin it immediately to your group's private map.
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl border border-slate-800 bg-[#111827]/80 space-y-3 hover:border-purple-500/60 hover:shadow-glow-purple transition-all duration-300 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500/20 to-indigo-500/20 text-purple-400 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
+            <div className="p-6 rounded-3xl border border-slate-200/80 bg-slate-50 space-y-3 hover:border-purple-300 hover:bg-white hover:shadow-md transition-all duration-200 group">
+              <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                 <Heart className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-base text-white font-display">See Who's Interested</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-extrabold text-base text-slate-900 font-display">See Who's Interested</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Click "💖 I'm Interested" on any saved place so your squad knows where everyone wants to go next.
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl border border-slate-800 bg-[#111827]/80 space-y-3 hover:border-emerald-500/60 transition-all duration-300 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 text-emerald-400 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
+            <div className="p-6 rounded-3xl border border-slate-200/80 bg-slate-50 space-y-3 hover:border-purple-300 hover:bg-white hover:shadow-md transition-all duration-200 group">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                 <Camera className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-base text-white font-display">Share Photos & Thoughts</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-extrabold text-base text-slate-900 font-display">Share Photos & Thoughts</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Attach up to 5 photos and post thoughts when you visit to turn pins into permanent memories.
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl border border-slate-800 bg-[#111827]/80 space-y-3 hover:border-indigo-500/60 transition-all duration-300 group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-rose-500/20 text-indigo-400 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
+            <div className="p-6 rounded-3xl border border-slate-200/80 bg-slate-50 space-y-3 hover:border-purple-300 hover:bg-white hover:shadow-md transition-all duration-200 group">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                 <Lock className="w-5 h-5" />
               </div>
-              <h3 className="font-extrabold text-base text-white font-display">Private & Invite-Only</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="font-extrabold text-base text-slate-900 font-display">Private & Invite-Only</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Share a simple 6-character code to let your closest friends join your squad's private map.
               </p>
             </div>
@@ -378,60 +370,57 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* How It Works Connected Steps Flow */}
+      {/* How It Works Steps Flow */}
       <section id="how-it-works" className="py-20 px-4 lg:px-12 max-w-7xl mx-auto space-y-12">
         <div className="text-center max-w-xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-mono font-bold tracking-widest uppercase">
-            // SIMPLE WORKFLOW
-          </div>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight font-display">
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight font-display">
             How Tuki Works
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
-            From group creation to visited memories in 4 connected steps.
+          <p className="text-xs sm:text-sm text-slate-600">
+            From group creation to visited memories in 4 simple steps.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          <div className="p-5 rounded-3xl border border-slate-800 bg-[#111827]/90 space-y-3 relative hover:border-rose-500/50 transition-colors group">
-            <span className="w-8 h-8 rounded-full bg-rose-500 text-white font-mono font-extrabold text-sm flex items-center justify-center">
+          <div className="p-6 rounded-3xl border border-slate-200/80 bg-white shadow-sm space-y-3 relative hover:border-purple-400 transition-all group">
+            <span className="w-8 h-8 rounded-full bg-purple-600 text-white font-mono font-extrabold text-sm flex items-center justify-center shadow-md">
               1
             </span>
-            <h4 className="font-bold text-sm text-white font-display">Create Squad</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="font-bold text-sm text-slate-900 font-display">Create Squad</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
               Start a group and get a unique 6-character invite code (e.g. BOYS26).
             </p>
-            <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-0.5 bg-slate-800 z-10" />
+            <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-0.5 bg-slate-200 z-10" />
           </div>
 
-          <div className="p-5 rounded-3xl border border-slate-800 bg-[#111827]/90 space-y-3 relative hover:border-rose-500/50 transition-colors group">
-            <span className="w-8 h-8 rounded-full bg-rose-500 text-white font-mono font-extrabold text-sm flex items-center justify-center">
+          <div className="p-6 rounded-3xl border border-slate-200/80 bg-white shadow-sm space-y-3 relative hover:border-purple-400 transition-all group">
+            <span className="w-8 h-8 rounded-full bg-purple-600 text-white font-mono font-extrabold text-sm flex items-center justify-center shadow-md">
               2
             </span>
-            <h4 className="font-bold text-sm text-white font-display">Pin Wishlist</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="font-bold text-sm text-slate-900 font-display">Pin Wishlist</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
               Search restaurants, beaches, or hiking basecamps and add them to the map.
             </p>
-            <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-0.5 bg-slate-800 z-10" />
+            <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-0.5 bg-slate-200 z-10" />
           </div>
 
-          <div className="p-5 rounded-3xl border border-slate-800 bg-[#111827]/90 space-y-3 relative hover:border-rose-500/50 transition-colors group">
-            <span className="w-8 h-8 rounded-full bg-rose-500 text-white font-mono font-extrabold text-sm flex items-center justify-center">
+          <div className="p-6 rounded-3xl border border-slate-200/80 bg-white shadow-sm space-y-3 relative hover:border-purple-400 transition-all group">
+            <span className="w-8 h-8 rounded-full bg-purple-600 text-white font-mono font-extrabold text-sm flex items-center justify-center shadow-md">
               3
             </span>
-            <h4 className="font-bold text-sm text-white font-display">Express Interest</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="font-bold text-sm text-slate-900 font-display">Express Interest</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
               Click ❤️ I'm Interested and post thoughts on places you want to visit next.
             </p>
-            <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-0.5 bg-slate-800 z-10" />
+            <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-0.5 bg-slate-200 z-10" />
           </div>
 
-          <div className="p-5 rounded-3xl border border-slate-800 bg-[#111827]/90 space-y-3 relative hover:border-rose-500/50 transition-colors group">
-            <span className="w-8 h-8 rounded-full bg-rose-500 text-white font-mono font-extrabold text-sm flex items-center justify-center">
+          <div className="p-6 rounded-3xl border border-slate-200/80 bg-white shadow-sm space-y-3 relative hover:border-purple-400 transition-all group">
+            <span className="w-8 h-8 rounded-full bg-purple-600 text-white font-mono font-extrabold text-sm flex items-center justify-center shadow-md">
               4
             </span>
-            <h4 className="font-bold text-sm text-white font-display">Build Memories</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="font-bold text-sm text-slate-900 font-display">Build Memories</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
               Mark spots as 🟢 Visited and upload photos to build your visual travel history.
             </p>
           </div>
@@ -439,20 +428,20 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Footer CTA Banner */}
-      <section className="py-16 px-4 lg:px-12 bg-slate-900 border-t border-slate-800 text-white text-center">
-        <div className="max-w-3xl mx-auto space-y-6">
+      <section className="max-w-7xl mx-auto px-4 lg:px-12 my-16">
+        <div className="rounded-3xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white p-10 sm:p-14 text-center shadow-xl space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-display">
             Ready to plan your next squad adventure?
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-purple-100 max-w-lg mx-auto leading-relaxed font-medium">
             Create your first group map in seconds. No credit card or complex setup required.
           </p>
           <div className="pt-2 flex justify-center">
             <Link
               to="/groups"
-              className="px-8 py-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs tracking-wider uppercase shadow-md transition-all hover:scale-105"
+              className="px-8 py-4 rounded-2xl bg-white text-purple-700 hover:bg-slate-50 font-extrabold text-xs tracking-wider uppercase shadow-lg transition-all hover:scale-105"
             >
-              Open Tuki App Now &rarr;
+              START YOUR SQUAD MAP &rarr;
             </Link>
           </div>
         </div>
