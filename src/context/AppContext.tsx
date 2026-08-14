@@ -42,12 +42,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const currentUser = userProfile || CURRENT_USER;
 
   // Theme State: Light mode default
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    const savedTheme = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'theme');
-    return (savedTheme as ThemeMode) || 'light';
-  });
+  const [theme, setTheme] = useState<ThemeMode>('light');
 
-  // Apply dark class to <html> element
+  // Ensure light mode is applied
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
