@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Compass, ArrowRight, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Compass, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const RegisterPage: React.FC = () => {
@@ -15,7 +15,7 @@ export const RegisterPage: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // If already logged in, redirect
+  // Redirect if logged in
   React.useEffect(() => {
     if (userProfile) {
       navigate('/groups', { replace: true });
@@ -63,25 +63,38 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-950">
-      <div className="w-full max-w-md p-8 rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl space-y-6">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center shadow-glow-brand">
-            <Compass className="w-7 h-7 text-white" />
+    <div className="min-h-screen relative flex items-center justify-center p-4 bg-slate-950 overflow-hidden">
+      {/* Ambient Background Glow Orbs */}
+      <div className="absolute top-1/4 right-1/3 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Main Glassmorphic Auth Card */}
+      <div className="w-full max-w-md p-8 sm:p-10 rounded-3xl border border-slate-800/90 bg-slate-900/90 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 relative z-10">
+        
+        {/* Header Branding */}
+        <div className="text-center space-y-3">
+          <Link to="/" className="inline-flex items-center gap-2.5 group mb-2">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-indigo-600 flex items-center justify-center shadow-glow-emerald transition-transform group-hover:scale-105">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+          </Link>
+          <div className="space-y-1">
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">Create Account</h1>
+            <p className="text-xs text-slate-400 font-medium">
+              Join <span className="text-emerald-400 font-bold">Tuki</span> and explore social maps with your squad
+            </p>
           </div>
-          <h1 className="text-2xl font-extrabold text-white">Create Account</h1>
-          <p className="text-xs text-slate-400">Join Tuki and discover places with your squad</p>
         </div>
 
         {errorMsg && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5">
+          <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-3">
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5">
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-3">
             <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
             <span>{successMsg}</span>
           </div>
@@ -89,7 +102,7 @@ export const RegisterPage: React.FC = () => {
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mb-2">
               Full Name
             </label>
             <input
@@ -98,12 +111,12 @@ export const RegisterPage: React.FC = () => {
               placeholder="e.g. Alex Rivera"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white text-xs border border-slate-800 focus:border-sky-500 outline-none transition-colors"
+              className="w-full px-4 py-3.5 rounded-2xl bg-slate-950/80 text-white text-xs border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mb-2">
               Email Address
             </label>
             <input
@@ -112,12 +125,12 @@ export const RegisterPage: React.FC = () => {
               placeholder="alex@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white text-xs border border-slate-800 focus:border-sky-500 outline-none transition-colors"
+              className="w-full px-4 py-3.5 rounded-2xl bg-slate-950/80 text-white text-xs border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mb-2">
               Password
             </label>
             <input
@@ -126,18 +139,18 @@ export const RegisterPage: React.FC = () => {
               placeholder="Min. 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white text-xs border border-slate-800 focus:border-sky-500 outline-none transition-colors"
+              className="w-full px-4 py-3.5 rounded-2xl bg-slate-950/80 text-white text-xs border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all"
             />
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-bold text-sm shadow-glow-brand transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:opacity-50 text-slate-950 font-extrabold text-xs tracking-wide uppercase shadow-glow-emerald transition-all flex items-center justify-center gap-2 mt-2"
           >
             {submitting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
                 <span>Creating Account...</span>
               </>
             ) : (
@@ -149,9 +162,9 @@ export const RegisterPage: React.FC = () => {
           </button>
         </form>
 
-        <div className="relative flex items-center justify-center my-4">
+        <div className="relative flex items-center justify-center my-5">
           <div className="border-t border-slate-800 w-full" />
-          <span className="bg-slate-900 px-3 text-[10px] uppercase tracking-widest text-slate-500 font-bold shrink-0">
+          <span className="bg-slate-900 px-3 text-[10px] uppercase tracking-widest text-slate-500 font-extrabold shrink-0">
             or continue with
           </span>
           <div className="border-t border-slate-800 w-full" />
@@ -162,12 +175,12 @@ export const RegisterPage: React.FC = () => {
           type="button"
           onClick={handleGoogleSignup}
           disabled={googleSubmitting}
-          className="w-full py-3 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-white font-medium text-xs transition-all flex items-center justify-center gap-3"
+          className="w-full py-3.5 px-4 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 text-slate-200 font-bold text-xs transition-all flex items-center justify-center gap-3 group"
         >
           {googleSubmitting ? (
             <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
           ) : (
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -190,19 +203,19 @@ export const RegisterPage: React.FC = () => {
         </button>
 
         {!isConfigured && (
-          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center space-y-1">
-            <p className="text-[11px] font-semibold text-amber-400">
-              ⚡ Demo Mode Active
+          <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center space-y-1">
+            <p className="text-[11px] font-bold text-amber-400 flex items-center justify-center gap-1.5">
+              <span>⚡</span> Demo Mode Active
             </p>
             <p className="text-[10px] text-amber-300/70">
-              Supabase keys in <code className="text-amber-200 bg-amber-950/60 px-1 py-0.5 rounded">.env.local</code> will activate full live backend auth.
+              Set Supabase keys in <code className="text-amber-200 bg-amber-950/60 px-1.5 py-0.5 rounded font-mono">.env.local</code> for live backend auth.
             </p>
           </div>
         )}
 
-        <div className="text-center text-xs text-slate-400">
+        <div className="text-center text-xs text-slate-400 pt-2">
           Already have an account?{' '}
-          <Link to="/login" className="text-sky-400 font-bold hover:underline">
+          <Link to="/login" className="text-emerald-400 font-extrabold hover:underline">
             Sign in
           </Link>
         </div>
