@@ -38,11 +38,11 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-300 overflow-x-hidden">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-[1100] h-20 border-b border-slate-800/80 bg-[#0b0e14]/90 backdrop-blur-xl px-4 lg:px-12 flex items-center justify-between">
+      <header className="sticky top-0 z-[1100] h-20 border-b border-slate-800/80 bg-[#0b0f19]/90 backdrop-blur-xl px-4 lg:px-12 flex items-center justify-between">
         {/* Brand */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-700 flex items-center justify-center shadow-glow-amber transition-transform group-hover:scale-105">
-            <Sparkles className="w-6 h-6 text-slate-950" />
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-600 to-indigo-600 flex items-center justify-center shadow-glow-rose transition-transform group-hover:scale-105">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
           <span className="font-display font-extrabold text-2xl tracking-tight text-white">
             Tuki
@@ -51,13 +51,13 @@ export const LandingPage: React.FC = () => {
 
         {/* Nav Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-mono tracking-wider font-bold text-slate-400">
-          <a href="#features" className="hover:text-amber-400 transition-colors">
+          <a href="#features" className="hover:text-rose-400 transition-colors">
             // WHY TUKI
           </a>
-          <a href="#how-it-works" className="hover:text-amber-400 transition-colors">
+          <a href="#how-it-works" className="hover:text-rose-400 transition-colors">
             // HOW IT WORKS
           </a>
-          <a href="#explore" className="hover:text-amber-400 transition-colors">
+          <a href="#explore" className="hover:text-rose-400 transition-colors">
             // SQUAD MAPS
           </a>
         </nav>
@@ -66,17 +66,17 @@ export const LandingPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Link
             to="/login"
-            className="hidden sm:inline-block px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-300 hover:text-amber-400 transition-colors"
+            className="hidden sm:inline-block px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-300 hover:text-rose-400 transition-colors"
           >
             Sign In
           </Link>
 
           <Link
             to="/groups"
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow-glow-amber transition-all hover:scale-105"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-400 hover:to-purple-500 text-white text-xs font-extrabold shadow-glow-rose transition-all hover:scale-105"
           >
             <span>Launch App</span>
-            <ArrowRight className="w-4 h-4 text-slate-950" />
+            <ArrowRight className="w-4 h-4 text-white" />
           </Link>
         </div>
       </header>
@@ -84,20 +84,20 @@ export const LandingPage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative pt-12 pb-28 px-4 lg:px-12 max-w-7xl mx-auto topo-grid-bg">
         {/* Ambient Glow Orbs */}
-        <div className="absolute top-10 left-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-40 right-5 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-10 left-1/4 w-[500px] h-[500px] bg-rose-500/15 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-40 right-5 w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           {/* Left Hero Content */}
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-bold tracking-widest uppercase">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono font-bold tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
               Social Cartography
             </div>
 
             <h1 className="font-display text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.08]">
               Your camera roll has<br />
-              <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-rose-400 via-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
                 places.
               </span>
             </h1>
@@ -110,15 +110,15 @@ export const LandingPage: React.FC = () => {
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
               <Link
                 to="/groups"
-                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-extrabold text-xs tracking-wider uppercase shadow-glow-cyan transition-all hover:scale-105"
+                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 hover:from-rose-400 hover:to-purple-500 text-white font-extrabold text-xs tracking-wider uppercase shadow-glow-rose transition-all hover:scale-105"
               >
                 <span>Create Squad Map Free</span>
-                <ArrowRight className="w-4 h-4 text-slate-950" />
+                <ArrowRight className="w-4 h-4 text-white" />
               </Link>
 
               <button
                 onClick={() => navigate('/groups')}
-                className="px-6 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-cyan-500/50 font-extrabold text-xs tracking-wider uppercase transition-all"
+                className="px-6 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-rose-500/50 font-extrabold text-xs tracking-wider uppercase transition-all"
               >
                 Explore Demo Groups
               </button>
@@ -127,7 +127,7 @@ export const LandingPage: React.FC = () => {
             {/* Social Proof Stats Bar */}
             <div className="pt-6 flex items-center justify-center lg:justify-start gap-6 text-xs font-mono font-bold text-slate-400 border-t border-slate-800/80 max-w-lg">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-cyan-400" />
+                <Users className="w-4 h-4 text-rose-400" />
                 <span>{groups.length}+ Active Squads</span>
               </div>
               <div className="flex items-center gap-2">

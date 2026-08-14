@@ -7,11 +7,11 @@
     @apply transition-colors duration-300 scroll-smooth;
   }
   body {
-    @apply bg-[#090d16] text-slate-100 overflow-x-hidden font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 transition-colors duration-300;
+    @apply bg-[#0b0f19] text-slate-100 overflow-x-hidden font-sans antialiased selection:bg-rose-500 selection:text-white transition-colors duration-300;
     background-image: 
-      radial-gradient(at 15% 15%, rgba(6, 182, 212, 0.08) 0px, transparent 45%),
-      radial-gradient(at 85% 20%, rgba(99, 102, 241, 0.09) 0px, transparent 45%),
-      radial-gradient(at 50% 85%, rgba(16, 185, 129, 0.07) 0px, transparent 50%);
+      radial-gradient(at 15% 15%, rgba(244, 63, 94, 0.09) 0px, transparent 45%),
+      radial-gradient(at 85% 20%, rgba(139, 92, 246, 0.1) 0px, transparent 45%),
+      radial-gradient(at 50% 85%, rgba(251, 146, 60, 0.07) 0px, transparent 50%);
     background-attachment: fixed;
   }
 
@@ -25,17 +25,17 @@
   }
 }
 
-/* Signature Glow Utilities */
-.shadow-glow-cyan {
-  box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.4);
+/* Signature Social Glow Utilities */
+.shadow-glow-rose {
+  box-shadow: 0 0 35px -5px rgba(244, 63, 94, 0.4);
 }
 
-.shadow-glow-emerald {
-  box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.4);
+.shadow-glow-purple {
+  box-shadow: 0 0 35px -5px rgba(139, 92, 246, 0.4);
 }
 
-.shadow-glow-indigo {
-  box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.4);
+.shadow-glow-social {
+  box-shadow: 0 0 40px -5px rgba(225, 29, 72, 0.45);
 }
 
 /* 3D Stage & Interactive Perspective */
@@ -85,13 +85,13 @@
   animation: float3d 5s ease-in-out infinite;
 }
 
-/* Translucent Glassmorphism & Card Panels */
+/* Translucent Glassmorphism Panels */
 .glass-panel {
-  @apply bg-[#0f172a]/90 backdrop-blur-xl border border-slate-800/90 shadow-2xl;
+  @apply bg-[#111827]/90 backdrop-blur-xl border border-slate-800/90 shadow-2xl;
 }
 
 .glass-card {
-  @apply bg-[#1e293b]/90 border border-slate-800/90 hover:border-slate-700 transition-all duration-200;
+  @apply bg-[#161f30]/90 border border-slate-800/90 hover:border-slate-700 transition-all duration-200;
 }
 
 /* Custom Scrollbars */
@@ -100,7 +100,7 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-[#090d16];
+  @apply bg-[#0b0f19];
 }
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-800 hover:bg-slate-700 rounded-full transition-colors;
@@ -111,15 +111,15 @@
   width: 100%;
   height: 100%;
   font-family: 'Space Grotesk', system-ui, sans-serif !important;
-  background: #090d16 !important;
+  background: #0b0f19 !important;
 }
 
 .leaflet-popup-content-wrapper {
-  @apply bg-[#0f172a] text-slate-100 border border-slate-800 rounded-2xl shadow-2xl p-0 !important;
+  @apply bg-[#161f30] text-slate-100 border border-slate-800 rounded-2xl shadow-2xl p-0 !important;
 }
 
 .leaflet-popup-tip {
-  @apply bg-[#0f172a] !important;
+  @apply bg-[#161f30] !important;
 }
 
 .leaflet-popup-content {
