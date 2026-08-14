@@ -90,27 +90,27 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           {/* Left Hero Content */}
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold tracking-widest uppercase">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              Tactile Social Cartography
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-bold tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              Social Cartography
             </div>
 
             <h1 className="font-display text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.08]">
-              Map your squad's<br />
-              <span className="bg-gradient-to-r from-amber-400 via-amber-200 to-teal-400 bg-clip-text text-transparent">
-                favorite spots.
+              Your camera roll has<br />
+              <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+                places.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-              Save secret cafes, ocean lookouts, and late-night eats on a private interactive map shared exclusively with your squad.
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+              Save places you find, share them with your friends, and build a private map of everywhere you want to go — whenever you actually get around to it.
             </p>
 
             {/* CTAs */}
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
               <Link
                 to="/groups"
-                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs tracking-wider uppercase shadow-glow-amber transition-all hover:scale-105"
+                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-extrabold text-xs tracking-wider uppercase shadow-glow-cyan transition-all hover:scale-105"
               >
                 <span>Create Squad Map Free</span>
                 <ArrowRight className="w-4 h-4 text-slate-950" />
@@ -118,7 +118,7 @@ export const LandingPage: React.FC = () => {
 
               <button
                 onClick={() => navigate('/groups')}
-                className="px-6 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-amber-500/50 font-extrabold text-xs tracking-wider uppercase transition-all"
+                className="px-6 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-cyan-500/50 font-extrabold text-xs tracking-wider uppercase transition-all"
               >
                 Explore Demo Groups
               </button>
@@ -127,7 +127,7 @@ export const LandingPage: React.FC = () => {
             {/* Social Proof Stats Bar */}
             <div className="pt-6 flex items-center justify-center lg:justify-start gap-6 text-xs font-mono font-bold text-slate-400 border-t border-slate-800/80 max-w-lg">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-amber-400" />
+                <Users className="w-4 h-4 text-cyan-400" />
                 <span>{groups.length}+ Active Squads</span>
               </div>
               <div className="flex items-center gap-2">
