@@ -38,107 +38,104 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#090d16] dark:text-slate-100 transition-colors duration-300 overflow-x-hidden">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-[1100] h-20 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#090d16]/80 backdrop-blur-xl px-4 lg:px-12 flex items-center justify-between">
+      <header className="sticky top-0 z-[1100] h-20 border-b border-slate-800/80 bg-[#0b0e14]/90 backdrop-blur-xl px-4 lg:px-12 flex items-center justify-between">
         {/* Brand */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-glow-brand transition-transform group-hover:scale-105">
-            <Sparkles className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-700 flex items-center justify-center shadow-glow-amber transition-transform group-hover:scale-105">
+            <Sparkles className="w-6 h-6 text-slate-950" />
           </div>
-          <span className="font-extrabold text-2xl tracking-tight text-slate-900 dark:text-white">
+          <span className="font-display font-extrabold text-2xl tracking-tight text-white">
             Tuki
           </span>
         </Link>
 
         {/* Nav Links */}
-        <nav className="hidden md:flex items-center gap-8 text-xs font-bold text-slate-600 dark:text-slate-300">
-          <a href="#features" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-            Why Tuki
+        <nav className="hidden md:flex items-center gap-8 text-xs font-mono tracking-wider font-bold text-slate-400">
+          <a href="#features" className="hover:text-amber-400 transition-colors">
+            // WHY TUKI
           </a>
-          <a href="#how-it-works" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-            How It Works
+          <a href="#how-it-works" className="hover:text-amber-400 transition-colors">
+            // HOW IT WORKS
           </a>
-          <a href="#explore" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-            Squad Maps
+          <a href="#explore" className="hover:text-amber-400 transition-colors">
+            // SQUAD MAPS
           </a>
         </nav>
 
         {/* Header CTA Buttons */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-            className="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 border border-slate-200 dark:border-slate-800 transition-all hover:scale-105"
-          >
-            {theme === 'light' ? <Moon className="w-4.5 h-4.5 text-purple-600" /> : <Sun className="w-4.5 h-4.5 text-amber-400" />}
-          </button>
-
           <Link
             to="/login"
-            className="hidden sm:inline-block px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-purple-600 transition-colors"
+            className="hidden sm:inline-block px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-300 hover:text-amber-400 transition-colors"
           >
             Sign In
           </Link>
 
           <Link
             to="/groups"
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold shadow-glow-brand transition-all hover:scale-105"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow-glow-amber transition-all hover:scale-105"
           >
             <span>Launch App</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-slate-950" />
           </Link>
         </div>
       </header>
 
-      {/* Hero Section with STATIC AESTHETIC 3D VECTOR MAP & MULTIPLE PINS */}
-      <section className="relative pt-8 pb-28 px-4 lg:px-12 max-w-7xl mx-auto">
-        {/* Ambient 3D Glow Orbs */}
-        <div className="absolute top-10 left-1/4 w-[600px] h-[600px] bg-purple-500/20 dark:bg-purple-600/30 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-40 right-5 w-[500px] h-[500px] bg-indigo-500/20 dark:bg-indigo-600/30 rounded-full blur-[120px] pointer-events-none" />
+      {/* Hero Section */}
+      <section className="relative pt-12 pb-28 px-4 lg:px-12 max-w-7xl mx-auto topo-grid-bg">
+        {/* Ambient Glow Orbs */}
+        <div className="absolute top-10 left-1/4 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-40 right-5 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           {/* Left Hero Content */}
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-            <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
-              Your camera roll has<br />
-              <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-500 bg-clip-text text-transparent">
-                places.
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              Tactile Social Cartography
+            </div>
+
+            <h1 className="font-display text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.08]">
+              Map your squad's<br />
+              <span className="bg-gradient-to-r from-amber-400 via-amber-200 to-teal-400 bg-clip-text text-transparent">
+                favorite spots.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-              Save places you find, share them with your friends, and build a private map of everywhere you want to go — whenever you actually get around to it.
+            <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
+              Save secret cafes, ocean lookouts, and late-night eats on a private interactive map shared exclusively with your squad.
             </p>
 
             {/* CTAs */}
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
               <Link
                 to="/groups"
-                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-sm shadow-glow-brand transition-all hover:scale-105"
+                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs tracking-wider uppercase shadow-glow-amber transition-all hover:scale-105"
               >
-                <span>Create Group Map Free</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Create Squad Map Free</span>
+                <ArrowRight className="w-4 h-4 text-slate-950" />
               </Link>
 
               <button
                 onClick={() => navigate('/groups')}
-                className="px-6 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-purple-400 font-extrabold text-sm shadow-sm transition-all"
+                className="px-6 py-4 rounded-2xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-amber-500/50 font-extrabold text-xs tracking-wider uppercase transition-all"
               >
                 Explore Demo Groups
               </button>
             </div>
 
             {/* Social Proof Stats Bar */}
-            <div className="pt-6 flex items-center justify-center lg:justify-start gap-6 text-xs font-bold text-slate-500 dark:text-slate-400 border-t border-slate-200/80 dark:border-slate-800/80 max-w-lg">
+            <div className="pt-6 flex items-center justify-center lg:justify-start gap-6 text-xs font-mono font-bold text-slate-400 border-t border-slate-800/80 max-w-lg">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-purple-600" />
+                <Users className="w-4 h-4 text-amber-400" />
                 <span>{groups.length}+ Active Squads</span>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-rose-500" />
-                <span>{totalPlaces}+ Saved Places</span>
+                <MapPin className="w-4 h-4 text-rose-400" />
+                <span>{totalPlaces}+ Saved Pins</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <CheckCircle2 className="w-4 h-4 text-teal-400" />
                 <span>{totalVisited} Visited Memories</span>
               </div>
             </div>
