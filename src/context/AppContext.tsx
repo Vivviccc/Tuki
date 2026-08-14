@@ -59,43 +59,96 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Initialize state from LocalStorage or Fallback Mock Data
+  // Scoped storage prefix for logged in user
+  const userStoragePrefix = userProfile ? `tuki_user_${currentUser.id}_` : LOCAL_STORAGE_PREFIX;
+
+  // Initialize state from LocalStorage or empty list for logged in users
   const [groups, setGroups] = useState<Group[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'groups');
-    return saved ? JSON.parse(saved) : INITIAL_GROUPS;
+    const saved = localStorage.getItem(userStoragePrefix + 'groups');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        // ignore JSON error
+      }
+    }
+    // If logged in, start with empty list []
+    if (userProfile) {
+      return [];
+    }
+    // Demo guest mode can show initial mock groups
+    return INITIAL_GROUPS;
   });
 
   const [currentGroupId, setCurrentGroupIdState] = useState<string>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'currentGroupId');
-    return saved ? JSON.parse(saved) : INITIAL_GROUPS[0].id;
+    const saved = localStorage.getItem(userStoragePrefix + 'currentGroupId');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return groups[0]?.id || '';
   });
 
   const [places, setPlaces] = useState<Place[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'places');
-    return saved ? JSON.parse(saved) : INITIAL_PLACES;
+    const saved = localStorage.getItem(userStoragePrefix + 'places');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
+    if (userProfile) {
+      return [];
+    }
+    return INITIAL_PLACES;
   });
 
   const [activities, setActivities] = useState<ActivityEvent[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_PREFIX + 'activities');
-    return saved ? JSON.parse(saved) : INITIAL_ACTIVITIES;
+    const saved = localStorage.getItem(userStoragePrefix + 'activities');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
+    if (userProfile) {
+      return [];
+    }
+    return INITIAL_ACTIVITIES;
   });
+
+  // Re-sync when userProfile changes (e.g. user logs in or out)
+  useEffect(() => {
+    const savedGroups = localStorage.getItem(userStoragePrefix + 'groups');
+    if (savedGroups) {
+      try {
+        setGroups(JSON.parse(savedGroups));
+      } catch (e) {}
+    } else if (userProfile) {
+      setGroups([]);
+    } else {
+      setGroups(INITIAL_GROUPS);
+    }
+  }, [userProfile?.id]);
 
   // Save changes to localStorage
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_PREFIX + 'groups', JSON.stringify(groups));
-  }, [groups]);
+    localStorage.setItem(userStoragePrefix + 'groups', JSON.stringify(groups));
+  }, [groups, userStoragePrefix]);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_PREFIX + 'currentGroupId', JSON.stringify(currentGroupId));
-  }, [currentGroupId]);
+    localStorage.setItem(userStoragePrefix + 'currentGroupId', JSON.stringify(currentGroupId));
+  }, [currentGroupId, userStoragePrefix]);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_PREFIX + 'places', JSON.stringify(places));
-  }, [places]);
+    localStorage.setItem(userStoragePrefix + 'places', JSON.stringify(places));
+  }, [places, userStoragePrefix]);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_PREFIX + 'activities', JSON.stringify(activities));
-  }, [activities]);
+    localStorage.setItem(userStoragePrefix + 'activities', JSON.stringify(activities));
+  }, [activities, userStoragePrefix]);
 
   const currentGroup = groups.find((g) => g.id === currentGroupId) || groups[0] || null;
   const groupPlaces = places.filter((p) => p.groupId === currentGroupId);
@@ -127,27 +180,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const joinGroup = (inviteCode: string) => {
     const cleanCode = inviteCode.trim().toUpperCase();
-    const targetGroup = groups.find((g) => g.inviteCode.toUpperCase() === cleanCode);
+    let targetGroup = groups.find((g) => g.inviteCode.toUpperCase() === cleanCode);
+    let isFromTemplates = false;
+
+    if (!targetGroup) {
+      targetGroup = INITIAL_GROUPS.find((g) => g.inviteCode.toUpperCase() === cleanCode);
+      if (targetGroup) isFromTemplates = true;
+    }
 
     if (!targetGroup) {
       return { success: false, message: 'Invalid invite code. Please check and try again.' };
     }
 
     const isMember = targetGroup.members.some((m) => m.id === currentUser.id);
-    if (isMember) {
+    if (isMember && !isFromTemplates && groups.some((g) => g.id === targetGroup!.id)) {
       setCurrentGroupIdState(targetGroup.id);
       return { success: true, message: 'You are already a member of this group!', group: targetGroup };
     }
 
-    const updatedGroup = {
+    const updatedGroup: Group = {
       ...targetGroup,
-      members: [...targetGroup.members, currentUser],
+      members: isMember ? targetGroup.members : [...targetGroup.members, currentUser],
     };
 
-    setGroups((prev) => prev.map((g) => (g.id === targetGroup.id ? updatedGroup : g)));
-    setCurrentGroupIdState(targetGroup.id);
+    if (isFromTemplates || !groups.some((g) => g.id === targetGroup!.id)) {
+      setGroups((prev) => [updatedGroup, ...prev]);
+    } else {
+      setGroups((prev) => prev.map((g) => (g.id === targetGroup!.id ? updatedGroup : g)));
+    }
 
-    return { success: true, message: `Successfully joined ${targetGroup.name}!`, group: updatedGroup };
+    setCurrentGroupIdState(updatedGroup.id);
+    return { success: true, message: `Successfully joined ${updatedGroup.name}! 🎉`, group: updatedGroup };
   };
 
   const addPlace = (placeData: {

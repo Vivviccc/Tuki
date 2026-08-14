@@ -269,7 +269,33 @@ export const GroupsPage: React.FC = () => {
 
           {/* Group Cards Grid */}
           <div className="space-y-4">
-            {filteredGroups.length === 0 ? (
+            {groups.length === 0 ? (
+              <div className="p-10 text-center rounded-3xl border-2 border-dashed border-purple-200 dark:border-purple-900/50 bg-purple-50/40 dark:bg-purple-950/20 space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto">
+                  <Users className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">No Squad Maps Yet</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
+                    Create your first squad map for your friends or enter a 6-character invite code to join an existing group.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => setIsCreateOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md transition-all hover:scale-105"
+                  >
+                    <Plus className="w-4 h-4" /> Create Squad
+                  </button>
+                  <button
+                    onClick={() => setIsJoinOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-sm transition-all"
+                  >
+                    <UserPlus className="w-4 h-4 text-purple-500" /> Join with Code
+                  </button>
+                </div>
+              </div>
+            ) : filteredGroups.length === 0 ? (
               <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 text-xs font-semibold">
                 No squad maps found matching "{searchQuery}".
               </div>
