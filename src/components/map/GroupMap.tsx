@@ -46,7 +46,7 @@ interface GroupMapProps {
 }
 
 export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) => {
-  const { toggleInterest, currentUser, theme } = useApp();
+  const { toggleInterest, currentUser, theme, deletePlace } = useApp();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
@@ -213,6 +213,7 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
       const el = createMarkerElement(place.status, isSelected);
 
       const isInterested = place.interestedUserIds.includes(currentUser.id);
+      const isCreator = place.addedBy?.id === currentUser.id;
 
       // Popup HTML content
       const popupDiv = document.createElement('div');
@@ -221,6 +222,7 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
         ${place.photos[0] ? `<img src="${place.photos[0]}" alt="${place.name}" class="w-full h-28 object-cover rounded-lg mb-2.5" />` : ''}
         <div class="flex items-start justify-between gap-2">
           <h4 class="font-bold text-sm text-slate-900 dark:text-white line-clamp-1">${place.name}</h4>
+          ${isCreator ? `<button id="del-pin-${place.id}" class="text-[10px] font-bold text-rose-500 hover:text-rose-700 bg-rose-500/10 px-2 py-0.5 rounded-md">Delete</button>` : ''}
         </div>
         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">📍 ${place.address}</p>
         <div class="mt-3 flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -228,6 +230,20 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
           <a href="/places/${place.id}" class="px-2.5 py-1 rounded-lg bg-purple-600 text-[11px] font-bold text-white transition-colors">Details &rarr;</a>
         </div>
       `;
+
+      if (isCreator) {
+        setTimeout(() => {
+          const btn = document.getElementById(`del-pin-${place.id}`);
+          if (btn) {
+            btn.onclick = (e) => {
+              e.preventDefault();
+              if (window.confirm(`Delete pin "${place.name}"?`)) {
+                deletePlace(place.id);
+              }
+            };
+          }
+        }, 100);
+      }
 
       const popup = new maplibregl.Popup({ offset: 25, closeButton: false }).setDOMContent(popupDiv);
 

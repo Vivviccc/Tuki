@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Group } from '../../types';
-import { Compass, MapPin } from 'lucide-react';
+import { Compass, MapPin, Archive, ArchiveRestore } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface GroupCardProps {
   group: Group;
@@ -10,6 +11,18 @@ interface GroupCardProps {
 }
 
 export const GroupCard: React.FC<GroupCardProps> = ({ group, placeCount, isActive }) => {
+  const { archiveGroup } = useApp();
+
+  const handleToggleArchive = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const nextState = !group.isArchived;
+    const actionText = nextState ? 'archive' : 'unarchive';
+    if (window.confirm(`Are you sure you want to ${actionText} "${group.name}"?`)) {
+      await archiveGroup(group.id, nextState);
+    }
+  };
+
   return (
     <div
       className={`group relative overflow-hidden rounded-3xl border transition-all duration-300 ${
@@ -29,14 +42,34 @@ export const GroupCard: React.FC<GroupCardProps> = ({ group, placeCount, isActiv
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
-          {isActive && (
-            <span className="px-3 py-1 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-extrabold tracking-wider uppercase shadow-glow-emerald">
-              Active Squad
+          <div className="flex items-center gap-2">
+            {isActive && (
+              <span className="px-3 py-1 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-extrabold tracking-wider uppercase shadow-glow-emerald">
+                Active Squad
+              </span>
+            )}
+            {group.isArchived && (
+              <span className="px-3 py-1 rounded-full bg-amber-500/90 text-slate-950 text-[10px] font-extrabold tracking-wider uppercase shadow-md">
+                Archived
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 pointer-events-auto">
+            <button
+              onClick={handleToggleArchive}
+              title={group.isArchived ? 'Unarchive Squad' : 'Archive Squad'}
+              className="p-1.5 rounded-full bg-slate-950/80 text-slate-300 hover:text-white hover:bg-slate-800 backdrop-blur-md border border-white/10 transition-colors"
+            >
+              {group.isArchived ? (
+                <ArchiveRestore className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Archive className="w-3.5 h-3.5" />
+              )}
+            </button>
+            <span className="px-2.5 py-1 rounded-full bg-slate-950/80 text-slate-300 text-[11px] font-bold backdrop-blur-md border border-white/10">
+              Code: <code className="text-emerald-400 font-mono font-bold">{group.inviteCode}</code>
             </span>
-          )}
-          <span className="px-2.5 py-1 rounded-full bg-slate-950/80 text-slate-300 text-[11px] font-bold backdrop-blur-md border border-white/10 ml-auto">
-            Code: <code className="text-emerald-400 font-mono font-bold">{group.inviteCode}</code>
-          </span>
+          </div>
         </div>
 
         {/* Card Header Content overlay */}

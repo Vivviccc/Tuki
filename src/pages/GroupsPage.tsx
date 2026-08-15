@@ -29,6 +29,7 @@ export const GroupsPage: React.FC = () => {
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'roadtrip' | 'foodie'>('all');
+  const [viewArchived, setViewArchived] = useState(false);
 
   // Personal user stats
   const userPlaces = places.filter((p) => p.addedBy.id === currentUser.id);
@@ -36,7 +37,11 @@ export const GroupsPage: React.FC = () => {
   const visitedPlaces = places.filter((p) => p.status === 'visited');
 
   // Filter groups
-  const filteredGroups = groups.filter((g) => {
+  const activeGroups = groups.filter((g) => !g.isArchived);
+  const archivedGroups = groups.filter((g) => g.isArchived);
+  const displayGroups = viewArchived ? archivedGroups : activeGroups;
+
+  const filteredGroups = displayGroups.filter((g) => {
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchName = g.name.toLowerCase().includes(q);
@@ -239,31 +244,26 @@ export const GroupsPage: React.FC = () => {
               />
             </div>
 
-            <div className="flex items-center p-1 rounded-2xl bg-white dark:bg-[#161f30] border border-slate-200 dark:border-slate-800 text-xs font-bold shadow-sm">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-3.5 py-1.5 rounded-xl transition-all ${
-                  selectedCategory === 'all' ? 'bg-purple-600 text-white shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                All ({groups.length})
-              </button>
-              <button
-                onClick={() => setSelectedCategory('roadtrip')}
-                className={`px-3.5 py-1.5 rounded-xl transition-all ${
-                  selectedCategory === 'roadtrip' ? 'bg-purple-600 text-white shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Roadtrips
-              </button>
-              <button
-                onClick={() => setSelectedCategory('foodie')}
-                className={`px-3.5 py-1.5 rounded-xl transition-all ${
-                  selectedCategory === 'foodie' ? 'bg-purple-600 text-white shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Foodies
-              </button>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Active vs Archived Tab Selector */}
+              <div className="flex items-center p-1 rounded-2xl bg-white dark:bg-[#161f30] border border-slate-200 dark:border-slate-800 text-xs font-bold shadow-sm">
+                <button
+                  onClick={() => setViewArchived(false)}
+                  className={`px-3.5 py-1.5 rounded-xl transition-all ${
+                    !viewArchived ? 'bg-purple-600 text-white shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Active ({activeGroups.length})
+                </button>
+                <button
+                  onClick={() => setViewArchived(true)}
+                  className={`px-3.5 py-1.5 rounded-xl transition-all ${
+                    viewArchived ? 'bg-amber-600 text-white shadow' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Archived ({archivedGroups.length})
+                </button>
+              </div>
             </div>
           </div>
 

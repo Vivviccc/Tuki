@@ -43,6 +43,7 @@ export interface Group {
   inviteCode: string;
   members: User[];
   createdAt: string;
+  isArchived?: boolean;
 }
 
 export type ActivityEventType =

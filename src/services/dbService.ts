@@ -119,6 +119,7 @@ export const dbService = {
         inviteCode: data.invite_code,
         members,
         createdAt: data.created_at || new Date().toISOString(),
+        isArchived: Boolean(data.is_archived),
       };
     } catch (err) {
       console.error('dbService.findGroupByInviteCode failed:', err);
@@ -160,6 +161,7 @@ export const dbService = {
             inviteCode: g.invite_code,
             members,
             createdAt: g.created_at || new Date().toISOString(),
+            isArchived: Boolean(g.is_archived),
           });
         }
       }
@@ -495,6 +497,46 @@ export const dbService = {
         .eq('id', placeId);
     } catch (err) {
       console.error('dbService.updatePlacePhotosInDb failed:', err);
+    }
+  },
+
+  /**
+   * Delete a place (pin) from DB
+   */
+  async deletePlaceFromDb(placeId: string): Promise<boolean> {
+    if (!isSupabaseConfigured()) return true;
+
+    try {
+      const { error } = await supabase.from('places').delete().eq('id', placeId);
+      if (error) {
+        console.error('Error deleting place:', error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error('dbService.deletePlaceFromDb failed:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Archive or unarchive a group in DB
+   */
+  async archiveGroupInDb(groupId: string, isArchived: boolean): Promise<boolean> {
+    if (!isSupabaseConfigured()) return true;
+
+    try {
+      const { error } = await supabase
+        .from('groups')
+        .update({ is_archived: isArchived })
+        .eq('id', groupId);
+      if (error) {
+        console.warn('archiveGroupInDb warning:', error);
+      }
+      return true;
+    } catch (err) {
+      console.error('dbService.archiveGroupInDb failed:', err);
+      return false;
     }
   },
 };

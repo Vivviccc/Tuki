@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Activity,
+  Trash2,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/ui/StatusBadge';
@@ -29,6 +30,7 @@ export const PlaceDetailPage: React.FC = () => {
     addThought,
     addPhoto,
     updatePlaceStatus,
+    deletePlace,
     activities,
   } = useApp();
 
@@ -54,6 +56,14 @@ export const PlaceDetailPage: React.FC = () => {
 
   const isInterested = place.interestedUserIds.includes(currentUser.id);
   const interestedMembers = group?.members.filter((m) => place.interestedUserIds.includes(m.id)) || [];
+  const canDelete = place.addedBy.id === currentUser.id;
+
+  const handleDeletePlace = async () => {
+    if (window.confirm(`Are you sure you want to delete "${place.name}"?`)) {
+      await deletePlace(place.id);
+      navigate(-1);
+    }
+  };
 
   const handleThoughtSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,6 +107,16 @@ export const PlaceDetailPage: React.FC = () => {
             interactive={true}
             onStatusChange={(newStatus: PlaceStatus) => updatePlaceStatus(place.id, newStatus)}
           />
+          {canDelete && (
+            <button
+              onClick={handleDeletePlace}
+              title="Delete Pin"
+              className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 font-bold transition-colors flex items-center gap-1.5 text-xs"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Delete Pin</span>
+            </button>
+          )}
           <button className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:text-purple-600 transition-colors">
             <Share2 className="w-4 h-4" />
           </button>
