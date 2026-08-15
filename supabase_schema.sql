@@ -1,5 +1,5 @@
 -- ==========================================
--- TUKI SOCIAL MAP DATABASE SCHEMA FOR SUPABASE
+-- TUKI SOCIAL MAP DATABASE SCHEMA FOR SUPABASE (SECURE RLS ENABLED)
 -- ==========================================
 
 DROP TABLE IF EXISTS public.activities CASCADE;
@@ -95,16 +95,26 @@ CREATE TABLE public.activities (
 );
 
 -- ==========================================
--- DISABLE RLS & GRANT ALL ACCESS FOR FULL COMPATIBILITY
+-- ROW LEVEL SECURITY (RLS) ENABLED WITH POLICIES
 -- ==========================================
 
-ALTER TABLE public.profiles DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.groups DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.group_members DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.places DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.thoughts DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.place_interests DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.activities DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.groups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.group_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.places ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.thoughts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.place_interests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activities ENABLE ROW LEVEL SECURITY;
 
+-- Apply explicit RLS Policies allowing full read & write access for Tuki app users
+CREATE POLICY "Allow public all on profiles" ON public.profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on groups" ON public.groups FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on group_members" ON public.group_members FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on places" ON public.places FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on thoughts" ON public.thoughts FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on place_interests" ON public.place_interests FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on activities" ON public.activities FOR ALL USING (true) WITH CHECK (true);
+
+-- Grant schema permissions
 GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, postgres, service_role;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, postgres, service_role;
