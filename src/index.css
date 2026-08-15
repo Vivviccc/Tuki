@@ -1,4 +1,4 @@
-@import 'leaflet/dist/leaflet.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -60,30 +60,26 @@
   @apply bg-slate-300 hover:bg-slate-400 rounded-full transition-colors;
 }
 
-/* Leaflet Map Styling */
-.leaflet-container {
+/* MapLibre GL 3D Vector Map Styling */
+.maplibregl-map {
   width: 100% !important;
   height: 100% !important;
-  min-height: 450px;
+  min-height: 500px;
   font-family: 'Space Grotesk', system-ui, sans-serif !important;
   background: #0f172a !important;
-  z-index: 1;
 }
 
-.custom-leaflet-marker {
+.custom-maplibre-marker {
   background: transparent !important;
   border: none !important;
 }
 
-.leaflet-popup-content-wrapper {
-  @apply bg-white text-slate-900 border border-slate-200 rounded-2xl shadow-2xl p-0 !important;
+.maplibregl-popup-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
-.leaflet-popup-tip {
-  @apply bg-white !important;
-}
-
-.leaflet-popup-content {
-  margin: 0 !important;
-  line-height: 1.5 !important;
+.maplibregl-popup-tip {
+  display: none !important;
 }
