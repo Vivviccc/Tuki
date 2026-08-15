@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, UserPlus, KeyRound, Sparkles, Check, Copy, Image as ImageIcon, QrCode, Share2 } from 'lucide-react';
+import { X, Users, UserPlus, KeyRound, Sparkles, Check, Copy, Image as ImageIcon, QrCode, Share2, Loader2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -42,12 +42,12 @@ export const CreateGroupModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     const finalCover = customCoverUrl.trim() || selectedCover;
-    const newGroup = createGroup(name.trim(), description.trim(), finalCover);
+    const newGroup = await createGroup(name.trim(), description.trim(), finalCover);
     setCreatedInviteCode(newGroup.inviteCode);
     setCreatedGroupId(newGroup.id);
   };
@@ -244,24 +244,36 @@ export const JoinGroupModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
   const [inviteCode, setInviteCode] = useState('');
+  const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ success?: boolean; message?: string }>({});
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteCode.trim()) return;
+    if (!inviteCode.trim() || loading) return;
 
-    const res = joinGroup(inviteCode);
-    setFeedback(res);
+    setLoading(true);
+    setFeedback({});
 
-    if (res.success && res.group) {
-      setTimeout(() => {
-        onClose();
-        setInviteCode('');
-        setFeedback({});
-        navigate(`/groups/${res.group?.id}`);
-      }, 1000);
+    try {
+      const res = await joinGroup(inviteCode);
+      setFeedback(res);
+
+      if (res.success && res.group) {
+        setTimeout(() => {
+          onClose();
+          setInviteCode('');
+          setFeedback({});
+          setLoading(false);
+          navigate(`/groups/${res.group?.id}`);
+        }, 800);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      setFeedback({ success: false, message: 'An unexpected error occurred. Please try again.' });
+      setLoading(false);
     }
   };
 
@@ -339,9 +351,17 @@ export const JoinGroupModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-sm shadow-glow-brand transition-all"
+            disabled={loading}
+            className="w-full py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-extrabold text-sm shadow-glow-brand transition-all flex items-center justify-center gap-2"
           >
-            Join Group
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>Checking Invite Code...</span>
+              </>
+            ) : (
+              <span>Join Group</span>
+            )}
           </button>
         </form>
       </div>

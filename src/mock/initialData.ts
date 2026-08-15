@@ -1,7 +1,7 @@
 import { User, Group, Place, ActivityEvent } from '../types';
 
 export const CURRENT_USER: User = {
-  id: 'u-[#000000]',
+  id: 'u-you',
   name: 'You',
   email: 'you@example.com',
   handle: '@you',
