@@ -440,6 +440,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const targetPlace = places.find((p) => p.id === placeId);
     if (!targetPlace) return false;
 
+    const sanitizedCurrentId = currentUser?.id ? currentUser.id.replace(/[^a-zA-Z0-9_-]/g, '_') : '';
+    const isCreator =
+      targetPlace.addedBy?.id === currentUser?.id ||
+      targetPlace.addedBy?.id === sanitizedCurrentId ||
+      (Boolean(targetPlace.addedBy?.email) && targetPlace.addedBy?.email === currentUser?.email);
+
+    if (!isCreator) {
+      alert('Only the person who pinned this spot can delete it.');
+      return false;
+    }
+
     setPlaces((prev) => prev.filter((p) => p.id !== placeId));
     const success = await dbService.deletePlaceFromDb(placeId);
     return success;

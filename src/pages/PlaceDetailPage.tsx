@@ -56,7 +56,12 @@ export const PlaceDetailPage: React.FC = () => {
 
   const isInterested = place.interestedUserIds.includes(currentUser.id);
   const interestedMembers = group?.members.filter((m) => place.interestedUserIds.includes(m.id)) || [];
-  const canDelete = place.addedBy.id === currentUser.id;
+  
+  const sanitizedCurrentId = currentUser?.id ? currentUser.id.replace(/[^a-zA-Z0-9_-]/g, '_') : '';
+  const canDelete =
+    place.addedBy?.id === currentUser?.id ||
+    place.addedBy?.id === sanitizedCurrentId ||
+    (Boolean(place.addedBy?.email) && place.addedBy?.email === currentUser?.email);
 
   const handleDeletePlace = async () => {
     if (window.confirm(`Are you sure you want to delete "${place.name}"?`)) {

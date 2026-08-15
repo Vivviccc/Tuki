@@ -213,7 +213,11 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
       const el = createMarkerElement(place.status, isSelected);
 
       const isInterested = place.interestedUserIds.includes(currentUser.id);
-      const isCreator = place.addedBy?.id === currentUser.id;
+      const sanitizedCurrentId = currentUser?.id ? currentUser.id.replace(/[^a-zA-Z0-9_-]/g, '_') : '';
+      const isCreator =
+        place.addedBy?.id === currentUser?.id ||
+        place.addedBy?.id === sanitizedCurrentId ||
+        (Boolean(place.addedBy?.email) && place.addedBy?.email === currentUser?.email);
 
       // Popup HTML content
       const popupDiv = document.createElement('div');
