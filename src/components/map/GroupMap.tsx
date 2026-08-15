@@ -87,11 +87,57 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
     }
   }, [places.length]);
 
-  // Vector map style URL
-  const styleUrl =
-    theme === 'dark'
-      ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-      : 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
+const LIGHT_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  sources: {
+    'osm-tiles': {
+      type: 'raster',
+      tiles: [
+        'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      ],
+      tileSize: 256,
+      attribution: '&copy; OpenStreetMap contributors',
+    },
+  },
+  layers: [
+    {
+      id: 'osm-tiles-layer',
+      type: 'raster',
+      source: 'osm-tiles',
+      minzoom: 0,
+      maxzoom: 19,
+    },
+  ],
+};
+
+const DARK_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  sources: {
+    'carto-dark-tiles': {
+      type: 'raster',
+      tiles: [
+        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      ],
+      tileSize: 256,
+      attribution: '&copy; CARTO &copy; OpenStreetMap',
+    },
+  },
+  layers: [
+    {
+      id: 'carto-dark-layer',
+      type: 'raster',
+      source: 'carto-dark-tiles',
+      minzoom: 0,
+      maxzoom: 19,
+    },
+  ],
+};
+
+  const currentStyle = theme === 'dark' ? DARK_STYLE : LIGHT_STYLE;
 
   // Initialize MapLibre GL Map
   useEffect(() => {
@@ -99,7 +145,7 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: styleUrl,
+      style: currentStyle,
       center: mapCenter,
       zoom: mapZoom,
       pitch: 30, // 3D Mapbox tilt perspective
@@ -132,10 +178,10 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
     };
   }, []);
 
-  // Sync theme vector style change
+  // Sync theme style change
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.setStyle(styleUrl);
+      mapRef.current.setStyle(currentStyle);
     }
   }, [theme]);
 
