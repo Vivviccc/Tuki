@@ -38,7 +38,7 @@ CREATE INDEX idx_groups_invite_code ON public.groups (UPPER(invite_code));
 -- 3. Group Members Junction Table
 CREATE TABLE public.group_members (
   group_id TEXT REFERENCES public.groups(id) ON DELETE CASCADE,
-  user_id TEXT NOT NULL,
+  user_id TEXT REFERENCES public.profiles(id) ON DELETE CASCADE,
   role TEXT DEFAULT 'member',
   joined_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (group_id, user_id)

@@ -88,23 +88,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [currentUser?.id]);
 
-  // Sync places for current active group from Supabase
+  // Sync places and activities for current active group from Supabase
   useEffect(() => {
     let isMounted = true;
-    const fetchPlacesForGroup = async () => {
+    const fetchGroupData = async () => {
       if (isSupabaseConfigured() && currentGroupId) {
-        const dbPlaces = await dbService.fetchGroupPlaces(currentGroupId);
+        const [dbPlaces, dbActivities] = await Promise.all([
+          dbService.fetchGroupPlaces(currentGroupId),
+          dbService.fetchGroupActivities(currentGroupId),
+        ]);
         if (isMounted) {
           setPlaces((prev) => {
             const otherPlaces = prev.filter((p) => p.groupId !== currentGroupId);
             return [...otherPlaces, ...dbPlaces];
           });
+          setActivities((prev) => {
+            const otherActivities = prev.filter((a) => a.groupId !== currentGroupId);
+            return [...otherActivities, ...dbActivities];
+          });
         }
       } else if (!currentGroupId) {
-        if (isMounted) setPlaces([]);
+        if (isMounted) {
+          setPlaces([]);
+          setActivities([]);
+        }
       }
     };
-    fetchPlacesForGroup();
+    fetchGroupData();
     return () => {
       isMounted = false;
     };
@@ -181,9 +191,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setCurrentGroupIdState(updatedGroup.id);
 
-    // Sync membership to Supabase DB
+    // Sync membership to Supabase DB and refetch
     if (isSupabaseConfigured() && currentUser.id) {
-      await dbService.joinGroupInDb(updatedGroup.id, currentUser.id);
+      await dbService.joinGroupInDb(updatedGroup.id, currentUser.id, currentUser);
+      const dbGroups = await dbService.fetchUserGroups(currentUser.id);
+      if (dbGroups.length > 0) {
+        setGroups(dbGroups);
+        const refetched = dbGroups.find((g) => g.id === updatedGroup.id);
+        if (refetched) {
+          return {
+            success: true,
+            message: isAlreadyMember
+              ? `Switched to group ${refetched.name}!`
+              : `Successfully joined ${refetched.name}! 🎉`,
+            group: refetched,
+          };
+        }
+      }
     }
 
     return {
@@ -255,6 +279,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // DB Background sync
     dbService.createPlaceInDb(newPlace);
+    dbService.createActivityInDb(newActivity);
     if (placeData.initialThought && initialThoughts[0]) {
       dbService.addThoughtInDb(newPlace.id, initialThoughts[0]);
     }
@@ -289,6 +314,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         timestamp: 'Just now',
       };
       setActivities((prev) => [newActivity, ...prev]);
+      dbService.createActivityInDb(newActivity);
     }
 
     dbService.toggleInterestInDb(placeId, currentUser.id, isInterested);
@@ -331,6 +357,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivities((prev) => [newActivity, ...prev]);
 
     dbService.addThoughtInDb(placeId, newThought);
+    dbService.createActivityInDb(newActivity);
   };
 
   const addPhoto = (placeId: string, photoUrl: string) => {
@@ -365,6 +392,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivities((prev) => [newActivity, ...prev]);
 
     dbService.updatePlacePhotosInDb(placeId, updatedPhotos);
+    dbService.createActivityInDb(newActivity);
 
     return { success: true };
   };
@@ -403,6 +431,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivities((prev) => [newActivity, ...prev]);
 
     dbService.updatePlaceStatusInDb(placeId, status, visitedDate);
+    dbService.createActivityInDb(newActivity);
   };
 
   return (

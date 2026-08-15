@@ -8,6 +8,89 @@ const sanitizeUserId = (id?: string): string => {
 
 export const dbService = {
   /**
+   * Upsert a user's profile to public.profiles table
+   */
+  async ensureUserProfile(user: User): Promise<void> {
+    if (!isSupabaseConfigured() || !user?.id) return;
+    const userId = sanitizeUserId(user.id);
+    try {
+      const { error } = await supabase.from('profiles').upsert(
+        {
+          id: userId,
+          name: user.name || 'Explorer',
+          email: user.email || '',
+          handle: user.handle || `@user_${userId.slice(0, 5)}`,
+          avatar: user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+        },
+        { onConflict: 'id' }
+      );
+      if (error) console.warn('ensureUserProfile warning:', error);
+    } catch (err) {
+      console.error('dbService.ensureUserProfile failed:', err);
+    }
+  },
+
+  /**
+   * Resiliently fetch members for a group
+   */
+  async getGroupMembers(groupId: string): Promise<User[]> {
+    if (!isSupabaseConfigured()) return [];
+
+    try {
+      // 1. Get member user_ids for the group
+      const { data: memberRows, error: memberErr } = await supabase
+        .from('group_members')
+        .select('user_id')
+        .eq('group_id', groupId);
+
+      if (memberErr || !memberRows || memberRows.length === 0) {
+        if (memberErr) console.error('Error fetching group_members in getGroupMembers:', memberErr);
+        return [];
+      }
+
+      const userIds = memberRows.map((m: any) => m.user_id).filter(Boolean);
+      if (userIds.length === 0) return [];
+
+      // 2. Fetch profiles for all member user_ids
+      const { data: profileRows, error: profErr } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('id', userIds);
+
+      if (profErr) console.error('Error fetching profiles in getGroupMembers:', profErr);
+
+      const profileMap = new Map<string, any>();
+      (profileRows || []).forEach((p: any) => {
+        if (p?.id) profileMap.set(p.id, p);
+      });
+
+      // 3. Map member rows to User objects
+      return userIds.map((uid: string) => {
+        const prof = profileMap.get(uid);
+        if (prof) {
+          return {
+            id: prof.id,
+            name: prof.name || 'Explorer',
+            email: prof.email || '',
+            handle: prof.handle || `@user_${prof.id.slice(0, 5)}`,
+            avatar: prof.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${prof.id}`,
+          };
+        }
+        return {
+          id: uid,
+          name: 'Squad Member',
+          email: '',
+          handle: `@member_${uid.slice(0, 5)}`,
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`,
+        };
+      });
+    } catch (err) {
+      console.error('dbService.getGroupMembers failed:', err);
+      return [];
+    }
+  },
+
+  /**
    * Find a group by its 6-character invite code (case-insensitive)
    */
   async findGroupByInviteCode(inviteCode: string): Promise<Group | null> {
@@ -26,33 +109,7 @@ export const dbService = {
         return null;
       }
 
-      // Fetch group members
-      const { data: memberRows, error: memberErr } = await supabase
-        .from('group_members')
-        .select('user_id, profiles(*)')
-        .eq('group_id', data.id);
-
-      if (memberErr) console.error('Error fetching group members:', memberErr);
-
-      const members: User[] = (memberRows || []).map((m: any) => {
-        const prof = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
-        if (prof) {
-          return {
-            id: prof.id,
-            name: prof.name || 'Member',
-            email: prof.email || '',
-            handle: prof.handle || `@user_${prof.id.slice(0, 5)}`,
-            avatar: prof.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${prof.id}`,
-          };
-        }
-        return {
-          id: m.user_id,
-          name: 'Squad Member',
-          email: '',
-          handle: '@member',
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.user_id}`,
-        };
-      });
+      const members = await this.getGroupMembers(data.id);
 
       return {
         id: data.id,
@@ -93,22 +150,7 @@ export const dbService = {
           const g: any = Array.isArray(row.groups) ? row.groups[0] : row.groups;
           if (!g || !g.id) continue;
 
-          // Fetch members for this group
-          const { data: memberData } = await supabase
-            .from('group_members')
-            .select('user_id, profiles(*)')
-            .eq('group_id', g.id);
-
-          const members: User[] = (memberData || []).map((m: any) => {
-            const prof = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
-            return {
-              id: prof?.id || m.user_id,
-              name: prof?.name || 'Squad Member',
-              email: prof?.email || '',
-              handle: prof?.handle || '@member',
-              avatar: prof?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.user_id}`,
-            };
-          });
+          const members = await this.getGroupMembers(g.id);
 
           groups.push({
             id: g.id,
@@ -143,23 +185,14 @@ export const dbService = {
 
       // 1. Ensure profile exists for creator in Supabase
       const creator = group.members[0] || {
+        id: userId,
         name: 'Explorer',
         email: '',
         handle: '@explorer',
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
       };
 
-      const { error: profErr } = await supabase.from('profiles').upsert(
-        {
-          id: userId,
-          name: creator.name,
-          email: creator.email || '',
-          handle: creator.handle || '@explorer',
-          avatar: creator.avatar || '',
-        },
-        { onConflict: 'id' }
-      );
-      if (profErr) console.warn('Profiles upsert warning:', profErr);
+      await this.ensureUserProfile(creator);
 
       // 2. Insert group into groups table
       const { data, error: groupErr } = await supabase.from('groups').insert({
@@ -198,11 +231,15 @@ export const dbService = {
   /**
    * Add a user to a group using group_id
    */
-  async joinGroupInDb(groupId: string, rawUserId: string): Promise<boolean> {
+  async joinGroupInDb(groupId: string, rawUserId: string, userProfile?: User): Promise<boolean> {
     if (!isSupabaseConfigured() || !rawUserId) return false;
     const userId = sanitizeUserId(rawUserId);
 
     try {
+      if (userProfile) {
+        await this.ensureUserProfile(userProfile);
+      }
+
       const { error } = await supabase.from('group_members').upsert(
         {
           group_id: groupId,
@@ -291,6 +328,64 @@ export const dbService = {
     } catch (err) {
       console.error('dbService.fetchGroupPlaces failed:', err);
       return [];
+    }
+  },
+
+  /**
+   * Fetch activities for a group
+   */
+  async fetchGroupActivities(groupId: string): Promise<ActivityEvent[]> {
+    if (!isSupabaseConfigured()) return [];
+
+    try {
+      const { data, error } = await supabase
+        .from('activities')
+        .select('*')
+        .eq('group_id', groupId)
+        .order('timestamp', { ascending: false });
+
+      if (error || !data) return [];
+
+      return data.map((a: any) => ({
+        id: a.id,
+        groupId: a.group_id,
+        userId: a.user_id || 'u-anon',
+        userName: a.user_name || 'Member',
+        userAvatar: a.user_avatar || '',
+        type: a.type,
+        targetPlaceId: a.target_place_id || '',
+        targetPlaceName: a.target_place_name || '',
+        details: a.details || '',
+        timestamp: a.timestamp
+          ? new Date(a.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Just now',
+      }));
+    } catch (err) {
+      console.error('dbService.fetchGroupActivities failed:', err);
+      return [];
+    }
+  },
+
+  /**
+   * Insert new activity into DB
+   */
+  async createActivityInDb(activity: ActivityEvent): Promise<void> {
+    if (!isSupabaseConfigured()) return;
+
+    try {
+      await supabase.from('activities').insert({
+        id: activity.id,
+        group_id: activity.groupId,
+        user_id: sanitizeUserId(activity.userId),
+        user_name: activity.userName,
+        user_avatar: activity.userAvatar,
+        type: activity.type,
+        target_place_id: activity.targetPlaceId,
+        target_place_name: activity.targetPlaceName,
+        details: activity.details,
+      });
+    } catch (err) {
+      console.error('dbService.createActivityInDb failed:', err);
     }
   },
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { dbService } from '../services/dbService';
 import { User } from '../types';
 
 interface AuthContextType {
@@ -75,7 +76,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        setUserProfile(mapSupabaseUserToAppUser(session.user));
+        const appUser = mapSupabaseUserToAppUser(session.user);
+        setUserProfile(appUser);
+        dbService.ensureUserProfile(appUser);
       }
       setLoading(false);
     });
@@ -87,7 +90,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        setUserProfile(mapSupabaseUserToAppUser(session.user));
+        const appUser = mapSupabaseUserToAppUser(session.user);
+        setUserProfile(appUser);
+        dbService.ensureUserProfile(appUser);
       } else {
         setUserProfile(null);
       }
