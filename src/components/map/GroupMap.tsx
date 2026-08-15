@@ -90,22 +90,23 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
 const LIGHT_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   sources: {
-    'osm-tiles': {
+    'carto-voyager': {
       type: 'raster',
       tiles: [
-        'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+        'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+        'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+        'https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
       ],
       tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors',
+      attribution: '&copy; CARTO &copy; OpenStreetMap',
     },
   },
   layers: [
     {
-      id: 'osm-tiles-layer',
+      id: 'carto-voyager-layer',
       type: 'raster',
-      source: 'osm-tiles',
+      source: 'carto-voyager',
       minzoom: 0,
       maxzoom: 19,
     },
@@ -148,7 +149,10 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
       style: currentStyle,
       center: mapCenter,
       zoom: mapZoom,
-      pitch: 30, // 3D Mapbox tilt perspective
+      pitch: 0, // Flat 2D view (no tilt)
+      maxPitch: 0,
+      dragRotate: false,
+      touchPitch: false,
       attributionControl: false,
     });
 
