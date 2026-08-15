@@ -2,10 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Search, Plus, MapPin, Heart, CheckCircle2, Crosshair, Filter, X, MousePointerClick } from 'lucide-react';
 import { Place, PlaceStatus } from '../../types';
 import { StatusBadge } from '../ui/StatusBadge';
 import { useApp } from '../../context/AppContext';
+
+// Fix Leaflet default icon assets path in production Vite builds
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 // Helper custom SVG Leaflet markers matching Tuki mockup pin colors
 const createCustomIcon = (status: PlaceStatus, isSelected: boolean) => {
@@ -65,6 +74,19 @@ const MapController: React.FC<{ center: [number, number]; zoom: number }> = ({ c
     }, 200);
     return () => clearTimeout(timer);
   }, [center, zoom, map]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+    const handleResize = () => map.invalidateSize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [map]);
+
   return null;
 };
 
@@ -176,11 +198,14 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
 
   const tileUrl =
     theme === 'dark'
-      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   return (
-    <div className={`relative w-full h-full min-h-[540px] overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-[#090d16] shadow-xl ${isPinMode ? 'cursor-crosshair' : ''}`}>
+    <div
+      className={`relative w-full h-full min-h-[500px] overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-[#090d16] shadow-xl ${isPinMode ? 'cursor-crosshair' : ''}`}
+      style={{ width: '100%', height: '100%', minHeight: '500px' }}
+    >
       {/* Pin Mode Indicator Banner */}
       {isPinMode && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1100] px-4 py-2 rounded-2xl bg-purple-600 text-white font-extrabold text-xs shadow-2xl flex items-center gap-3 animate-bounce">
@@ -227,7 +252,8 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
         center={mapCenter}
         zoom={mapZoom}
         zoomControl={false}
-        className="w-full h-full"
+        className="w-full h-full min-h-[500px]"
+        style={{ width: '100%', height: '100%', minHeight: '500px' }}
       >
         <MapController center={mapCenter} zoom={mapZoom} />
         <MapClickHandler isPinMode={isPinMode} onMapClick={handleMapClick} />
@@ -235,7 +261,8 @@ export const GroupMap: React.FC<GroupMapProps> = ({ places, onOpenAddModal }) =>
         <TileLayer
           key={theme}
           url={tileUrl}
-          attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          subdomains={['a', 'b', 'c']}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
 
         {filteredPlaces.map((place) => {

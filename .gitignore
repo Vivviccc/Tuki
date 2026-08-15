@@ -23,3 +23,14 @@ dist
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# Agent Workflow rules
+.agent/
+.agents/skills/ultimate-*
+.agents/workflows/
+.claude/
+.cursor/
+.github/
+.clinerules
+.windsurfrules
+
