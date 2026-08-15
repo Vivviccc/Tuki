@@ -1,13 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Group, Place, ActivityEvent, PlaceStatus, Thought } from '../types';
-import { CURRENT_USER, INITIAL_GROUPS, INITIAL_PLACES, INITIAL_ACTIVITIES } from '../mock/initialData';
+import { CURRENT_USER } from '../mock/initialData';
 import { useAuth } from './AuthContext';
 import { dbService } from '../services/dbService';
 import { isSupabaseConfigured } from '../lib/supabase';
 
 export type ThemeMode = 'light' | 'dark';
-
-const GLOBAL_REGISTRY_KEY = 'tuki_global_invite_registry';
 
 interface AppContextType {
   currentUser: User;
@@ -39,31 +37,6 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_PREFIX = 'tuki_';
-
-// Helper to update shared global invite code registry in LocalStorage for cross-account demo testing
-const registerGroupInGlobalStorage = (group: Group) => {
-  try {
-    const raw = localStorage.getItem(GLOBAL_REGISTRY_KEY);
-    const registry: Record<string, Group> = raw ? JSON.parse(raw) : {};
-    registry[group.inviteCode.toUpperCase()] = group;
-    localStorage.setItem(GLOBAL_REGISTRY_KEY, JSON.stringify(registry));
-  } catch (e) {
-    console.error('Failed to update global invite registry:', e);
-  }
-};
-
-const findGroupInGlobalStorage = (code: string): Group | null => {
-  try {
-    const raw = localStorage.getItem(GLOBAL_REGISTRY_KEY);
-    if (!raw) return null;
-    const registry: Record<string, Group> = JSON.parse(raw);
-    return registry[code.trim().toUpperCase()] || null;
-  } catch (e) {
-    return null;
-  }
-};
-
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userProfile } = useAuth();
   const currentUser = userProfile || CURRENT_USER;
@@ -71,7 +44,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Theme State: Light mode default
   const [theme, setTheme] = useState<ThemeMode>('light');
 
-  // Ensure light mode is applied
+  // Ensure theme is applied
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -79,106 +52,56 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem(LOCAL_STORAGE_PREFIX + 'theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Scoped storage prefix for logged in user
-  const userStoragePrefix = userProfile ? `tuki_user_${currentUser.id}_` : LOCAL_STORAGE_PREFIX;
+  // State initialized purely empty - NO mock initial groups or local storage cache
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [currentGroupId, setCurrentGroupIdState] = useState<string>('');
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [activities, setActivities] = useState<ActivityEvent[]>([]);
 
-  // Initialize state from LocalStorage
-  const [groups, setGroups] = useState<Group[]>(() => {
-    const saved = localStorage.getItem(userStoragePrefix + 'groups');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch (e) {}
-    }
-    if (userProfile) {
-      return [];
-    }
-    return INITIAL_GROUPS;
-  });
-
-  const [currentGroupId, setCurrentGroupIdState] = useState<string>(() => {
-    const saved = localStorage.getItem(userStoragePrefix + 'currentGroupId');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
-    }
-    return groups[0]?.id || '';
-  });
-
-  const [places, setPlaces] = useState<Place[]>(() => {
-    const saved = localStorage.getItem(userStoragePrefix + 'places');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (e) {}
-    }
-    if (userProfile) {
-      return [];
-    }
-    return INITIAL_PLACES;
-  });
-
-  const [activities, setActivities] = useState<ActivityEvent[]>(() => {
-    const saved = localStorage.getItem(userStoragePrefix + 'activities');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (e) {}
-    }
-    if (userProfile) {
-      return [];
-    }
-    return INITIAL_ACTIVITIES;
-  });
-
-  // Hydrate groups from Supabase on mount / auth change
+  // Fetch real user groups strictly from Supabase DB
   useEffect(() => {
     let isMounted = true;
     const syncDatabaseData = async () => {
-      if (isSupabaseConfigured() && userProfile?.id) {
-        const dbGroups = await dbService.fetchUserGroups(userProfile.id);
-        if (isMounted && dbGroups.length > 0) {
-          setGroups((prev) => {
-            // merge preserving local newly created if any
-            const existingIds = new Set(dbGroups.map((g) => g.id));
-            const localOnly = prev.filter((g) => !existingIds.has(g.id));
-            return [...dbGroups, ...localOnly];
-          });
-          if (!currentGroupId || !dbGroups.some((g) => g.id === currentGroupId)) {
+      if (isSupabaseConfigured() && currentUser?.id) {
+        const dbGroups = await dbService.fetchUserGroups(currentUser.id);
+        if (isMounted) {
+          setGroups(dbGroups);
+          if (dbGroups.length > 0 && (!currentGroupId || !dbGroups.some((g) => g.id === currentGroupId))) {
             setCurrentGroupIdState(dbGroups[0].id);
+          } else if (dbGroups.length === 0) {
+            setCurrentGroupIdState('');
           }
         }
+      } else {
+        if (isMounted) setGroups([]);
       }
     };
     syncDatabaseData();
     return () => {
       isMounted = false;
     };
-  }, [userProfile?.id]);
+  }, [currentUser?.id]);
 
-  // Sync places for current group from Supabase
+  // Sync places for current active group from Supabase
   useEffect(() => {
     let isMounted = true;
     const fetchPlacesForGroup = async () => {
       if (isSupabaseConfigured() && currentGroupId) {
         const dbPlaces = await dbService.fetchGroupPlaces(currentGroupId);
-        if (isMounted && dbPlaces.length > 0) {
+        if (isMounted) {
           setPlaces((prev) => {
             const otherPlaces = prev.filter((p) => p.groupId !== currentGroupId);
             return [...otherPlaces, ...dbPlaces];
           });
         }
+      } else if (!currentGroupId) {
+        if (isMounted) setPlaces([]);
       }
     };
     fetchPlacesForGroup();
@@ -186,23 +109,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isMounted = false;
     };
   }, [currentGroupId]);
-
-  // Save state to localStorage
-  useEffect(() => {
-    localStorage.setItem(userStoragePrefix + 'groups', JSON.stringify(groups));
-  }, [groups, userStoragePrefix]);
-
-  useEffect(() => {
-    localStorage.setItem(userStoragePrefix + 'currentGroupId', JSON.stringify(currentGroupId));
-  }, [currentGroupId, userStoragePrefix]);
-
-  useEffect(() => {
-    localStorage.setItem(userStoragePrefix + 'places', JSON.stringify(places));
-  }, [places, userStoragePrefix]);
-
-  useEffect(() => {
-    localStorage.setItem(userStoragePrefix + 'activities', JSON.stringify(activities));
-  }, [activities, userStoragePrefix]);
 
   const currentGroup = groups.find((g) => g.id === currentGroupId) || groups[0] || null;
   const groupPlaces = places.filter((p) => p.groupId === currentGroupId);
@@ -230,10 +136,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setGroups((prev) => [newGroup, ...prev]);
     setCurrentGroupIdState(newGroup.id);
 
-    // Register in global storage registry for local demo testing across windows
-    registerGroupInGlobalStorage(newGroup);
-
-    // Sync to Supabase in background
+    // Insert to Supabase DB
     await dbService.createGroupInDb(newGroup, currentUser.id);
 
     return newGroup;
@@ -247,24 +150,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     let targetGroup: Group | null = null;
 
-    // 1. Try finding in Supabase DB first if configured
+    // Search strictly in Supabase DB
     if (isSupabaseConfigured()) {
       targetGroup = await dbService.findGroupByInviteCode(cleanCode);
     }
 
-    // 2. Fallback to current local state groups
+    // Fallback to local state if currently loaded
     if (!targetGroup) {
       targetGroup = groups.find((g) => g.inviteCode.toUpperCase() === cleanCode) || null;
-    }
-
-    // 3. Fallback to global local storage registry (for cross-user demo testing)
-    if (!targetGroup) {
-      targetGroup = findGroupInGlobalStorage(cleanCode);
-    }
-
-    // 4. Fallback to template mock groups
-    if (!targetGroup) {
-      targetGroup = INITIAL_GROUPS.find((g) => g.inviteCode.toUpperCase() === cleanCode) || null;
     }
 
     if (!targetGroup) {
@@ -288,7 +181,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setCurrentGroupIdState(updatedGroup.id);
 
-    // Sync membership to Supabase DB if configured
+    // Sync membership to Supabase DB
     if (isSupabaseConfigured() && currentUser.id) {
       await dbService.joinGroupInDb(updatedGroup.id, currentUser.id);
     }
