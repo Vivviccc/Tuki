@@ -171,12 +171,23 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
 
     mapRef.current = map;
 
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    });
+
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
+
     const timer = setTimeout(() => {
       map.resize();
     }, 200);
 
     return () => {
       clearTimeout(timer);
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
     };
@@ -361,8 +372,7 @@ const DARK_STYLE: maplibregl.StyleSpecification = {
       {/* MapLibre GL 3D Container */}
       <div
         ref={mapContainerRef}
-        className="w-full h-full min-h-[500px]"
-        style={{ width: '100%', height: '100%', minHeight: '500px' }}
+        className="absolute inset-0 w-full h-full"
       />
 
       {/* Floating Bottom Stats Overlay */}
